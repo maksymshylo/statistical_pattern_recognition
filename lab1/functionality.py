@@ -26,7 +26,16 @@ def get_bigrams(json_path):
             array with shape (letters x letters)
 
     loads pair letters frequencies
+
+    examples:
+    >>> get_bigrams('test.json')
+    Traceback (most recent call last):
+    ...
+    Exception: frequencies.json does not exist
     ''' 
+    if not os.path.isfile(json_path):
+        raise Exception('frequencies.json does not exist')
+
     with open(json_path) as json_file: 
         frequencies_dict = json.load(json_file)
 
@@ -62,8 +71,22 @@ def import_images(folder_path,alphabet_list):
             dict (key - letter, values - ndarray of letter)
 
     importing images in dict
-    '''
 
+    examples:
+    >>> import_images('alpha', 'a')
+    Traceback (most recent call last):
+    ...
+    Exception: alphabet folder does not exist
+    >>> alphabet_list = list(string.ascii_lowercase)
+    >>> import_images('alphabet',alphabet_list)
+    Traceback (most recent call last):
+    ...
+    Exception: alphabet is not full or doesnt exist
+    '''
+    if not os.path.exists(folder_path):
+        raise Exception('alphabet folder does not exist')
+    if alphabet_list != list(string.ascii_lowercase + ' '):
+        raise Exception('alphabet is not full or doesnt exist')
     reference_images = {}
     for i in alphabet_list[:-1] + ['space']:
         img = np.array(Image.open(folder_path + f'/{i}.png')).astype('int')
@@ -88,7 +111,21 @@ def string_to_image(string,reference_images,noise_level):
             noised string as array
 
     generating image from string with noising
+
+    examples:
+    >>> string_to_image(12,[], 0.1)
+    Traceback (most recent call last):
+    ...
+    Exception: input string is not str
+    >>> string_to_image('alpha',[],-1)
+    Traceback (most recent call last):
+    ...
+    Exception: invalid value of noise level
     '''
+    if type(string) != str:
+        raise Exception('input string is not str')
+    if (noise_level < 0 or noise_level > 1):
+        raise Exception('invalid value of noise level')
 
     # create string as array
     image = reference_images[string[0]]
@@ -194,8 +231,13 @@ def recognizer(input_image,alphabet_list,reference_images,p,p_k):
             recognized image
 
     recognizing noised image
+    examples
+    >>> recognizer(np.array([1,0]), [], [],0,[])
+    array([1, 0])
+    >>> recognizer(np.array([1,0]), [], [],1,[])
+    array([0, 1])
     '''
-
+    
     if p == 0:
         return input_image
     if p == 1:
@@ -259,46 +301,6 @@ def backward_pass(penalties, alphabet_list ,letters_length):
 
 
 
-
-
-def main():
-    '''
-    Parameters
-        argv[1]: str 
-            path to json
-        argv[2]: str
-            path to image folder
-        argv[3]: string
-            input string
-        argv[4]: float
-            noise level
-    '''
-    # initialise parameters
-    path_to_json, image_folder, input_string, p = sys.argv[1:]
-    a = time.time()
-    p = float(p)
-    alphabet_list, alphabet_dict, p_k =  get_bigrams(path_to_json)
-    reference_images = import_images(image_folder,alphabet_list)
-    input_image_zero_noise = string_to_image(input_string,reference_images,0)
-    input_image = string_to_image(input_string,reference_images,p)
-
-    # recognizing string 
-    output_image = recognizer(input_image,alphabet_list,reference_images,p,p_k)
-    print("total time", time.time()-a)
-    print("length:",len(input_string))
-    print("input string : ", input_string)
-
-    # plot images
-    plt.figure()
-
-    plt.subplot(3,1,1), plt.imshow(input_image_zero_noise,cmap = 'gray'), plt.axis('off')
-
-    plt.subplot(3,1,2), plt.imshow(input_image,cmap = 'gray'), plt.axis('off')
-
-    plt.subplot(3,1,3), plt.imshow(output_image,cmap = 'gray'), plt.axis('off')
-
-    plt.show()    
-
-
 if __name__ == "__main__":
-    main()
+    import doctest
+    doctest.testmod()

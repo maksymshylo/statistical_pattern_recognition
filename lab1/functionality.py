@@ -78,7 +78,7 @@ def import_images(folder_path,alphabet_list):
     ...
     Exception: alphabet folder does not exist
     >>> alphabet_list = list(string.ascii_lowercase)
-    >>> import_images('alphabet',alphabet_list)
+    >>> import_images('lab1/alphabet',alphabet_list)
     Traceback (most recent call last):
     ...
     Exception: alphabet is not full or doesnt exist

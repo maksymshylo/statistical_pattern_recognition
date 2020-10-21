@@ -22,7 +22,8 @@ def main():
     input_image = np.array(Image.open(path_to_input_image)).astype('int') #string_to_image(input_string,reference_images,p)
 
     # recognizing string 
-    output_image = recognizer(input_image,alphabet_list,reference_images,p,p_k)
+    output_image, output_string = recognizer(input_image,alphabet_list,reference_images,p,p_k)
+    print(output_string)
     print("total time", time.time()-a)
 
     plt.figure()
@@ -31,7 +32,7 @@ def main():
 
     plt.subplot(2,1,2), plt.imshow(output_image,cmap = 'gray'), plt.axis('off'),plt.title("output image")
 
-    plt.show()     
+    plt.show()      
 
 
 if __name__ == "__main__":

@@ -266,11 +266,11 @@ def recognizer(input_image,alphabet_list,reference_images,p,p_k):
         prev_q = np.array(list(set(next_q)))
     
     # create string from penalties array
-    output_string = backward_pass(penalties, alphabet_list ,letters_length)
+    output_string = backward_pass(penalties, alphabet_list ,letters_length,p_k)
     output_image = string_to_image(output_string,reference_images,0)
-    return output_image
+    return (output_image , output_string)
 
-def backward_pass(penalties, alphabet_list ,letters_length):
+def backward_pass(penalties, alphabet_list ,letters_length,p_k):
 
     '''
     Parameters
@@ -280,6 +280,8 @@ def backward_pass(penalties, alphabet_list ,letters_length):
             list of letters
         letters_length: list
             list of letters lengths
+        p_k: ndarray
+            array with shape (letters x letters)
     Returns
         output_string[::-1]: str
             recognized string
@@ -287,18 +289,21 @@ def backward_pass(penalties, alphabet_list ,letters_length):
     get recognized string from penalties
     '''
     # best letters in each length
-    pen = np.argmax(penalties,axis=1)[::-1]
+    penalties = penalties[::-1]
     output_string = ''
-    i = 0
-    # until we reach end of string
-    while pen.shape[0]-2 >= i:
-        last_letter = alphabet_list[pen[i]]
-        t = letters_length[pen[i]]
-        #print(penalties[-(i+1),pen[i]])
-        output_string+=last_letter
-        i = i+t
+    last_letter = np.argmax(penalties[0])
+    width_last = letters_length[last_letter]
+    output_string += alphabet_list[last_letter]
+    i = width_last
+    while i <= penalties.shape[0]-2:
+        #print(i, penalties.shape[0]-2)
+        letter = np.argmax(penalties[i] + p_k[:,last_letter])
+        output_string += alphabet_list[letter]
+        width_last = letters_length[letter]
+        last_letter = letter
+        i += width_last
+    
     return output_string[::-1]
-
 
 
 if __name__ == "__main__":

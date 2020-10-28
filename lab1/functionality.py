@@ -167,7 +167,7 @@ def preprocessing(input_image, alphabet_list, reference_images):
     min_letter_size = min([i.shape[1] for i in letters])
     return (penalties, letters,letters_length, min_letter_size)
 
-@njit
+@njit(fastmath=True) 
 def tumba_umba(input_image, letters, penalties, prev_q , next_q, p, p_k):
     
     '''

@@ -8,8 +8,16 @@ import time
 
 image = skimage.io.imread('map_hsv.png').astype("int")
 
-def get_q(xt,c,k):
-    return norm(xt-c[k], axis=2) > norm(xt-c[1-k], axis=2)  
+def get_q(image,c, K):
+    norms = np.empty((image.shape[0],image.shape[1],len(K)))
+    for k in K:
+        norms[...,k] = norm(image-c[k], axis=2)
+    
+    Q = np.empty_like(norms, dtype = bool)
+    for i in range(image.shape[0]):
+        for j in range(image.shape[1]):
+            Q[i,j,:] = norms[i,j,:] == np.min(norms[i,j,:])
+    return Q
 
 
 @njit
@@ -74,16 +82,14 @@ def get_labelling(height, width, g,fi):
             nbs, inv_nbs_indices, nbs_indices = get_neighbours(height, width,i,j)
             n_i, n_j = nbs[0]
             g_reparametrized = g - fi[i,j,nbs_indices[0],:] - fi[n_i,n_j,inv_nbs_indices[0],:]
-            labelling[i,j] = np.argmin(np.min(g_reparametrized,axis = 0))
+            labelling[i,j] = np.argmax(np.max(g_reparametrized,axis = 0))
     return labelling
 
 def process(image:ndarray,alpha:int = 1,c:ndarray = np.array([[0,0,255],[0,255,0]]), K:ndarray = np.array([0,1]), n_iter:int = 10 ) -> ndarray:
     height, width, _ = image.shape
     n_labels = len(K)
     n_neighbors = 4
-    Q = np.full((height,width,n_labels), -1)
-    for k in K:
-        Q[:,:,k] = get_q(image,c,k)
+    Q =  get_q(image,c,K)
     g = alpha*np.identity(n_labels)
     fi = diffusion(height, width, K, Q, g, n_iter)
     labelling = get_labelling(height, width, g, fi)

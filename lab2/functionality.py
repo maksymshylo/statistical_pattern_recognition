@@ -41,13 +41,13 @@ def get_q(image,c, K):
     norms = np.empty((image.shape[0],image.shape[1],len(K)))
     for k in K:
         norms[...,k] = norm(image-c[k], axis=2)
-    
+    mins = np.argmin(norms,axis=(2))
     # unary penalties
-    Q = np.empty_like(norms, dtype = bool)
+    Q = np.zeros_like(norms, dtype = bool)
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
-            #  q(k) = 1(x_t = min(norm(C(k) - X_t)))
-            Q[i,j,:] = norms[i,j,:] == np.min(norms[i,j,:])
+            # q(k) = 1(x_t = min(norm(C(k) - X_t)))
+            Q[i,j,mins[i,j]] = True
     return Q
 
 

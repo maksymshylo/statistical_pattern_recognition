@@ -19,3 +19,9 @@ python3 lab2/main.py input_image alpha n_iter colors
 python3 lab2/main.py lab2/test_images/ipt.png 1 10 blue white yellow
 python3 lab2/main.py lab2/test_images/map_hsv.png 3 100 blue lime
 ```
+## Lab 3
+```bash
+python3 lab3/main.py input_image alpha Epsilon n_labels n_iter
+
+python3 lab3/main.py lab3/test_images/mona-lisa-damaged.png 1 0 18 1
+```

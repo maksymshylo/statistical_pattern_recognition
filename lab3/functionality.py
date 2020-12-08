@@ -183,7 +183,7 @@ def process_channel(channel,K,alpha,Epsilon,n_iter):
     Exception: Wrong alpha value: < 0
     '''
 
-    if not 0<Epsilon<255:
+    if not 0<=Epsilon<=255:
         raise Exception('Wrong Epsilon value: < 0 or > 255')
     if alpha < 0:
         raise Exception('Wrong alpha value: < 0')

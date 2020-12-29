@@ -25,3 +25,10 @@ python3 lab3/main.py input_image alpha Epsilon n_labels n_iter
 
 python3 lab3/main.py lab3/test_images/mona-lisa-damaged.png 1 0 18 1
 ```
+## Lab 4
+```bash
+python3 lab4/main.py image_path mask_path gamma n_bg n_fg color_bg color_fg em_n_iter trws_n_iter n_iter 
+
+python3 lab4/main.py lab4/test_images/alpaca.jpg lab4/test_images/alpaca-segmentation.png  50 3 3 blue red 10 10 1
+python3 lab4/main.py lab4/test_images/lotus.jpg lab4/test_images/lotus-segmentation.png  50 3 3 lime blue 10 10 1
+```

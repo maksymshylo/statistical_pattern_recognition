@@ -3,9 +3,29 @@ import numpy as np
 
 @njit
 def get_right_down(height,width,i,j):
+
+    '''
+    Parameters
+        height: int
+            height of input image 
+        width: int
+            width of input image 
+        i: int
+            number of row
+        j: int
+            number of column
+    Returns
+        N: list
+            array of 2 neighbours coordinates
+    calculates 2 neighbours: Right and Down
+        (i,j)--(i,j+1)
+              |
+            (i+1,j)
+    '''
+
     # i,j - position of pixel
     # [Right, Down] - order of possible neighbours
-    # array of neighbour indices
+    # array of neighbour indices                                        
     nbs = [] 
     # Right
     if 0<j+1<=width-1 and 0<=i<=height-1:
@@ -15,13 +35,49 @@ def get_right_down(height,width,i,j):
         nbs.append([i+1,j])
     return nbs
 
-
-
 @njit
 def get_neighbours(height,width,i,j):
+
+    '''
+    Parameters
+        height: int
+            height of input image 
+        width: int
+            width of input image 
+        i: int
+            number of row
+        j: int
+            number of column
+    Returns
+        N: tuple
+            neighbours coordinates, neighbours indices, inverse neighbours indices
+    calculates neighbours in 4-neighbours system (and inverse indices)
+            (i-1,j)
+               |
+    (i,j-1)--(i,j)--(i,j+1)
+               |
+            (i+1,j)
+    examples:
+    >>> get_neighbours(-1,1,1,1)
+    Traceback (most recent call last):
+    ...
+    Exception: height or width is less than zero
+    >>> get_neighbours(3,3,-1,-1)
+    ([], [], [])
+    >>> get_neighbours(3,3,0,0)
+    ([[0, 1], [1, 0]], [0, 2], [1, 3])
+    >>> get_neighbours(3,3,0,1)
+    ([[0, 0], [0, 2], [1, 1]], [1, 0, 2], [0, 1, 3])
+    >>> get_neighbours(3,3,1,1)
+    ([[1, 0], [1, 2], [0, 1], [2, 1]], [1, 0, 3, 2], [0, 1, 2, 3])
+    '''
+
     # i,j - position of pixel
     # [Left, Right, Up, Down] - order of possible neighbours
     # array of neighbour indices
+    if width <= 0 or height <= 0:
+        raise Exception('height or width is less than zero')
+
     nbs = [] 
     # neighbour indices
     nbs_indices = []
@@ -142,6 +198,31 @@ def backward_pass(height,width,n_labels,Q,g,P,fi):
 
 def trws(height,width,n_labels,K,Q,g,P,n_iter):
 
+    '''
+    Parameters
+        height: int
+            height of input image 
+        width: int
+            width of input image 
+        n_labels: int
+            number of labels in labelset
+        K: ndarray
+            array of colors (mapping label->color)
+        Q: ndarray
+            array of unary penalties
+        g: ndarray
+            array of binary penalties
+        P: ndarray
+            array consist of best path weight for each direction (Left,Right,Up,Down)
+        n_iter: int
+            number of iteratations
+    Returns
+        output: ndarray
+            array of optimal labelling (with color mapping)
+    one iteration of TRW-S algorithm (forward and backward pass),
+    updates fi, according to best path for all directions
+    '''
+
     # initialise array of potentials with zeros
     fi = np.zeros((height,width,n_labels))
     # initialize Right and Down directions
@@ -150,12 +231,31 @@ def trws(height,width,n_labels,K,Q,g,P,n_iter):
         P,fi = forward_pass(height,width,n_labels,Q,g,P,fi)
         P,fi = backward_pass(height,width,n_labels,Q,g,P,fi)
     # restore labelling from optimal energy after n_iter of TRW-S
-    labelling = np.argmax(P[:,:,0,:] + P[:,:,1,:] -  fi + Q/2, axis = 2)
+    labelling = np.argmax(P[:,:,0,:] + P[:,:,1,:] -  fi + Q, axis = 2)
     # mapping from labels to colors
     output = K[labelling]
     return output
 
 def optimal_labelling(Q,g,K,n_iter):
+
+    '''
+    Parameters
+        Q: ndarray
+            updated unary penalties
+        g: ndarray
+            updated binary penalties
+        K: ndarray
+            set of labels
+        n_iter: int
+            number of iteratations
+    Returns
+        labelling: ndarray
+        array of optimal labelling (with color mapping) 
+        for one channel in input image
+    initialize input parameters for TRW-S algorithm,
+    and returns best labelling
+    '''
+
     height,width,_ = Q.shape
     n_labels = len(K)
     P = np.zeros((height,width,4,n_labels))

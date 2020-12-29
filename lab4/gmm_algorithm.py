@@ -2,9 +2,30 @@ from scipy.stats import multivariate_normal
 import numpy as np
 
 def predict_proba(X,n_components,mu,sigma,phi):
+
+    '''
+    Parameters
+        X: ndarray
+           array of multivariate distribution points
+        n_components: int
+            number of components(clusters) 
+        mu: list
+            list of means for each component
+        sigma: list
+            list of covariances for each component
+        phi: ndarray
+            array of apriori probabilities(p(k))
+    Returns
+        weights: ndarray
+            array of probabilities for each pixel
+    calculates weights
+    '''
+
     n,_ = X.shape
+    # initialize likelihood array
     likelihood = np.zeros( (n, n_components) )
     for i in range(n_components):
+        # calculate probability
         distribution = multivariate_normal(mean=mu[i], cov=sigma[i])
         likelihood[:,i] = distribution.pdf(X)
     
@@ -13,6 +34,26 @@ def predict_proba(X,n_components,mu,sigma,phi):
     return weights
 
 def em(X,n_components,mu,sigma,weights,phi):
+
+    '''
+    Parameters
+        X: ndarray
+           array of multivariate distribution points
+        n_components: int
+            number of components(clusters) 
+        mu: list
+            list of means for each component
+        sigma: list
+            list of covariances for each component
+        weights: ndarray
+            array of probabilities for each pixel
+        phi: ndarray
+            array of apriori probabilities(p(k))
+    Returns
+        updated mu,sigma,weights,phi
+    updates mu,sigma,weights,phi
+    '''
+
     # expectation step
     weights =  predict_proba(X,n_components,mu,sigma,phi)
     phi = np.mean(weights,axis=0)
@@ -27,15 +68,28 @@ def em(X,n_components,mu,sigma,weights,phi):
 
 def gmm(X,n_components, n_iter = 100):
 
+    '''
+    Parameters
+        X: ndarray
+           array of multivariate distribution points
+        n_components: int
+            number of components(clusters) 
+        n_iter: int
+            number of iterations
+    Returns
+        mu,sigma,weights,phi at n_iter iteration
+    initialize parameters and run n_iter iterations of EM algorithm
+    '''
+
     # initialization
     n,m = X.shape
     phi = np.full(n_components, 1/n_components)
     weights = np.full(X.shape,  1/n_components)
-    random_row = np.random.randint(low=0, high=n, size=n_components)
-    mu = list(X[random_row,:])
+    random_mu = np.random.randint(0, n, n_components)
+    mu = list(X[random_mu,:])
     sigma = [np.cov(X.T)]*n_components
 
-    # em
+    # EM
     for _ in range(n_iter):
         mu,sigma,weights,phi = em(X,n_components,mu,sigma,weights,phi)
 

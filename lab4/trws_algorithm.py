@@ -21,7 +21,25 @@ def get_right_down(height,width,i,j):
             (i,j)--(i,j+1)
               |
             (i+1,j)
+    examples:
+    >>> get_right_down(2,2,2,2.)
+    Traceback (most recent call last):
+    ...
+    Exception: invalid indices values (not integer)
+    >>> get_right_down(-2,2,2,2)
+    Traceback (most recent call last):
+    ...
+    Exception: height or width is less than zero
+    >>> get_right_down(2,2,2,2)
+    []
+    >>> get_right_down(2,2,0,0)
+    [[0, 1], [1, 0]]
     '''
+    
+    if width <= 0 or height <= 0:
+        raise Exception('height or width is less than zero')
+    if type(i) is not np.int64 or type(j) is not np.int64:
+        raise Exception('invalid indices values (not integer)')
 
     # i,j - position of pixel
     # [Right, Down] - order of possible neighbours

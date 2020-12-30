@@ -79,7 +79,20 @@ def gmm(X,n_components, n_iter = 100):
     Returns
         mu,sigma,weights,phi at n_iter iteration
     initialize parameters and run n_iter iterations of EM algorithm
+    examples:
+    >>> gmm(np.array([]),4,100)
+    Traceback (most recent call last):
+    ...
+    Exception: X sample is empty
+    >>> gmm(np.array([1]),0,100)
+    Traceback (most recent call last):
+    ...
+    Exception: n_components can not be less than 1
     '''
+    if X.size == 0:
+        raise Exception('X sample is empty')
+    if n_components <= 1:
+        raise Exception('n_components can not be less than 1')
 
     # initialization
     n,m = X.shape

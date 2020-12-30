@@ -18,14 +18,14 @@ def get_right_down(height,width,i,j):
         N: list
             array of 2 neighbours coordinates
     calculates 2 neighbours: Right and Down
-        (i,j)--(i,j+1)
+            (i,j)--(i,j+1)
               |
             (i+1,j)
     '''
 
     # i,j - position of pixel
     # [Right, Down] - order of possible neighbours
-    # array of neighbour indices                                        
+    # array of neighbour indices
     nbs = [] 
     # Right
     if 0<j+1<=width-1 and 0<=i<=height-1:
@@ -78,7 +78,7 @@ def get_neighbours(height,width,i,j):
     if width <= 0 or height <= 0:
         raise Exception('height or width is less than zero')
 
-    nbs = [] 
+    nbs = []
     # neighbour indices
     nbs_indices = []
     # inverse neighbour indices
@@ -221,7 +221,26 @@ def trws(height,width,n_labels,K,Q,g,P,n_iter):
             array of optimal labelling (with color mapping)
     one iteration of TRW-S algorithm (forward and backward pass),
     updates fi, according to best path for all directions
+    examples:
+    >>> trws('height','width','n_labels','K','Q','g','P',-1)
+    Traceback (most recent call last):
+    ...
+    Exception: n_iter <=0
+    >>> trws('height','width',3,np.array([0,1]),'Q','g','P',2)
+    Traceback (most recent call last):
+    ...
+    Exception: n_labels do not match with real number of labels
+    >>> trws('height','width',2,np.array([0,1]),[],'g','P',2)
+    Traceback (most recent call last):
+    ...
+    Exception: unary or binary penalties are empty
     '''
+    if n_iter <= 0:
+        raise Exception('n_iter <=0')
+    if len(K) != n_labels:
+        raise Exception('n_labels do not match with real number of labels')
+    if Q==[] or g ==[]:
+        raise Exception('unary or binary penalties are empty')
 
     # initialise array of potentials with zeros
     fi = np.zeros((height,width,n_labels))

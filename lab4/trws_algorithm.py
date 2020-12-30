@@ -231,7 +231,7 @@ def trws(height,width,n_labels,K,Q,g,P,n_iter):
         P,fi = forward_pass(height,width,n_labels,Q,g,P,fi)
         P,fi = backward_pass(height,width,n_labels,Q,g,P,fi)
     # restore labelling from optimal energy after n_iter of TRW-S
-    labelling = np.argmax(P[:,:,0,:] + P[:,:,1,:] -  fi + Q, axis = 2)
+    labelling = np.argmax(P[:,:,0,:] + P[:,:,1,:] -  fi + Q/2, axis = 2)
     # mapping from labels to colors
     output = K[labelling]
     return output

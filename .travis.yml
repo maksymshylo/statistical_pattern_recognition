@@ -13,4 +13,4 @@ script:
   - python3 -m doctest -v lab1/functionality.py
   - python3 -m doctest -v lab2/functionality.py
   - python3 -m doctest -v lab3/functionality.py
-  - python3 -m doctest -v lab4/trws_algorithm.py
+  - python3 -m doctest -v lab4/trws_algorithm.py lab4/gmm_algorithm.py

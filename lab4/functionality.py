@@ -124,7 +124,7 @@ def calculate_g(image,gamma,beta,g):
 
 
 
-def calculate_penalties(image,gamma,K,fg,bg,n_fg,n_bg,em_n_iter):
+def calculate_penalties(image,gamma,beta,K,fg,bg,n_fg,n_bg,em_n_iter):
 
     '''
     Parameters
@@ -171,7 +171,6 @@ def calculate_penalties(image,gamma,K,fg,bg,n_fg,n_bg,em_n_iter):
     Q = np.empty((height,width,len(K)))
     Q =  calculate_q(image,n_bg,n_fg,bg_params, fg_params,Q)
 
-    beta = calculate_beta(image)
     # update g
     g = np.zeros((height,width,4,len(K),len(K)))
     g = calculate_g(image,gamma,beta,g)
@@ -216,16 +215,17 @@ def process(params):
     # initial sample pixels for background and foreground
     bg = params.image[np.all(params.mask==params.color_bg,axis=2)]
     fg = params.image[np.all(params.mask==params.color_fg,axis=2)]
+    # calculate beta only one time
     # calculate penalties
-    Q,g = calculate_penalties(params.image, params.gamma, K, fg, bg, params.n_fg, params.n_bg, params.em_n_iter)
+    beta = calculate_beta(params.image)
+    Q,g = calculate_penalties(params.image, params.gamma, beta, K, fg, bg, params.n_fg, params.n_bg, params.em_n_iter)
     # calculate best labelling for given Q and g
     labelling = optimal_labelling(Q,g,K,params.trws_n_iter)
     # for number of iterations repeat
     for _ in range(params.n_iter-1):
         bg = params.image[labelling==0]
         fg = params.image[labelling==1]
-        Q,g = calculate_penalties(params.image, params.gamma, K, fg, bg, params.n_fg, params.n_bg, params.em_n_iter)
+        Q,g = calculate_penalties(params.image, params.gamma, beta, K, fg, bg, params.n_fg, params.n_bg, params.em_n_iter)
         labelling = optimal_labelling(Q,g,K,params.trws_n_iter)
     # best labelling after n_iter iterations of Grab Cut algorithm
     return labelling
-

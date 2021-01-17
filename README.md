@@ -1,8 +1,10 @@
 [![Build Status](https://travis-ci.com/maksymshylo/statistical_pattern_recognition.svg?token=j9Kqn8jNSznud7EAtsqm&branch=main)](https://travis-ci.com/maksymshylo/statistical_pattern_recognition)
 
 # Statistical Pattern Recognition
-Labs for University Course
-[tasks](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/tasks.pdf "tasks"), [solutions](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/solutions.pdf "solutions")
+Labs for University Course     
+
+
+[tasks](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/tasks.pdf "tasks"),[solutions](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/solutions.pdf "solutions")
 
 ## Lab 1 - DP algorithm for chain-structured graphical models 
 ### Image Denoising (Bernoulli noise)

@@ -4,7 +4,7 @@
 Labs for University Course     
 
 
-[tasks](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/tasks.pdf "tasks"),[solutions](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/solutions.pdf "solutions")
+[tasks](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/tasks.pdf "tasks"),  [solutions](https://github.com/maksymshylo/statistical_pattern_recognition/blob/main/solutions.pdf "solutions")
 
 ## Lab 1 - DP algorithm for chain-structured graphical models 
 ### Image Denoising (Bernoulli noise)
